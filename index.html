@@ -6,18 +6,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>スロット ビタ押し練習</title>
   <style>
-    /* CSSすべて（ユーザー提供分） */
-[CSS CODE OMITTED HERE FOR BREVITY IN PREVIEW]
+    /* (Canva-generated CSS styles go here — omitted for brevity) */
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- スロットリールなどのHTML構造 -->
-[HTML STRUCTURE OMITTED HERE FOR BREVITY IN PREVIEW]
-  </div>
+    <div class="machine">
+      <div class="reels-container">
+        <!-- Reel 1 -->
+        <div class="reel-column">
+          <div class="reel-window">
+            <div class="position-lines">
+              <div class="position-line top"></div>
+              <div class="position-line middle"></div>
+            </div>
+            <div class="position-labels">
+              <div class="position-label">上段</div>
+              <div class="position-label">中段</div>
+              <div class="position-label">下段</div>
+            </div>
+            <div class="reel" id="reel1"></div>
+            <div class="stopped-symbols" id="stopped-symbols1">
+              <div class="stopped-symbol top symbol-blue7" id="stopped-top1">7</div>
+              <div class="stopped-symbol middle symbol-blue7" id="stopped-middle1">7</div>
+              <div class="stopped-symbol bottom symbol-blue7" id="stopped-bottom1">7</div>
+            </div>
+            <div class="result-message text-green-600" id="result1"></div>
+          </div>
+          <div class="mt-4">
+            <button class="button stop-button" id="stop1" disabled>STOP</button>
+          </div>
+          <div class="error-message" id="error1"></div>
+        </div>
 
-  <script>
-    // JavaScript（リールの動作などを後ほど挿入可能）
-  </script>
+        <!-- Reel 2 -->
+        <div class="reel-column">
+          <div class="reel-window">
+            <div class="position-lines">
+              <div class="position-line top"></div>
+              <div class="position-line middle"></div>
+            </div>
+            <div class="position-labels">
+              <div class="position-label">上段</div>
+              <div class="position-label">中段</div>
+              <div class="position-label">下段</div>
+            </div>
+            <div class="reel" id="reel2"></div>
+            <div class="stopped-symbols" id="stopped-symbols2">
+              <div class="stopped-symbol top symbol-bar" id="stopped-top2">BAR</div>
+              <div class="stopped-symbol middle symbol-bar" id="stopped-middle2">BAR</div>
+              <div class="stopped-symbol bottom symbol-bar" id="stopped-bottom2">BAR</div>
+            </div>
+            <div class="result-message text-green-600" id="result2"></div>
+          </div>
+          <div class="mt-4">
+            <button class="button stop-button" id="stop2" disabled>STOP</button>
+          </div>
+          <div class="error-message" id="error2"></div>
+        </div>
+
+        <!-- Reel 3 -->
+        <div class="reel-column">
+          <div class="reel-window">
+            <div class="position-lines">
+              <div class="position-line top"></div>
+              <div class="position-line middle"></div>
+            </div>
+            <div class="position-labels">
+              <div class="position-label">上段</div>
+              <div class="position-label">中段</div>
+              <div class="position-label">下段</div>
+            </div>
+            <div class="reel" id="reel3"></div>
+            <div class="stopped-symbols" id="stopped-symbols3">
+              <div class="stopped-symbol top symbol-red7" id="stopped-top3">7</div>
+              <div class="stopped-symbol middle symbol-red7" id="stopped-middle3">7</div>
+              <div class="stopped-symbol bottom symbol-red7" id="stopped-bottom3">7</div>
+            </div>
+            <div class="result-message text-green-600" id="result3"></div>
+          </div>
+          <div class="mt-4">
+            <button class="button stop-button" id="stop3" disabled>STOP</button>
+          </div>
+          <div class="error-message" id="error3"></div>
+        </div>
+      </div>
+
+      <div class="flex justify-center mt-6 sm:mt-8">
+        <button class="button start-button" id="start">START</button>
+      </div>
+
+      <div class="congratulation" id="congratulation">
+        <div class="congratulation-text">CONGRATULATION!</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
