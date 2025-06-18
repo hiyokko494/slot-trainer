@@ -3,7 +3,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>スろットゲーム</title>
+  <title>スロットゲーム</title>
   <style>
     body {
       margin: 0;
@@ -28,7 +28,7 @@
     }
     .reel-window {
       width: 100px;
-      height: 300px; /* 3コマ分の高さに固定 */
+      height: 300px;
       overflow: hidden;
       border: 2px solid #333;
       background: #fff;
@@ -151,7 +151,7 @@
           d.innerText = s;
           reel.appendChild(d);
         });
-        reels[i] = { el: reel, pos: 0, running: false };
+        reels[i] = { el: reel, pos: total - visible, running: false };
         reel.style.top = `-${(total - visible) * 100}px`;
       }
     }
@@ -164,8 +164,8 @@
         if (intervals[i]) clearInterval(intervals[i]);
         intervals[i] = setInterval(() => {
           if (!reels[i].running) return;
-          reels[i].pos = (reels[i].pos + 1) % total;
-          reels[i].el.style.top = `-${((reels[i].pos - (total - visible) + total) % total) * 100}px`;
+          reels[i].pos = (reels[i].pos - 1 + total) % total;
+          reels[i].el.style.top = `-${(reels[i].pos) * 100}px`;
         }, speed);
       }
       document.getElementById("congrats").style.display = "none";
@@ -177,8 +177,8 @@
       reel.running = false;
       clearInterval(intervals[index]);
       const pos = (reel.pos + total) % total;
-      const target = total - 1;
-      const diff = (pos - target + total) % total;
+      const target = total - 1; // 下段に止めるべき位置
+      const diff = (target - pos + total) % total;
       const msg = document.getElementById("msg" + (index + 1));
       stopped[index] = true;
 
@@ -186,11 +186,11 @@
         msg.textContent = "great!";
         msg.className = "message great";
       } else if (diff <= total / 2) {
-        msg.textContent = `${diff}コマ早い！`;
-        msg.className = "message early";
-      } else {
-        msg.textContent = `${total - diff}コマ遅い！`;
+        msg.textContent = `${diff}コマ遅い！`;
         msg.className = "message late";
+      } else {
+        msg.textContent = `${total - diff}コマ早い！`;
+        msg.className = "message early";
       }
 
       if (stopped.every(s => s && document.querySelectorAll('.message.great').length === 3)) {
