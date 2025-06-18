@@ -2,23 +2,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>スロットゲーム</title>
   <style>
     body {
-      background: #f0f0f0;
+      margin: 0;
+      background: #f4f4f4;
+      font-family: sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      font-family: sans-serif;
+      height: 100vh;
     }
     .machine {
       background: white;
       padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -32,23 +32,26 @@
       height: 300px;
       overflow: hidden;
       border: 2px solid #333;
-      border-radius: 8px;
       position: relative;
+      border-radius: 8px;
     }
     .reel {
       position: absolute;
       width: 100%;
+      transition: transform 0.1s linear;
     }
     .symbol {
       height: 100px;
-      width: 100%;
-      font-size: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
+      font-size: 36px;
+      font-weight: bold;
+      width: 90%;
+      margin: 0 auto;
     }
     .blue7 { color: #3498db; }
-    .bar { color: black; }
+    .bar { color: black; font-size: 28px; }
     .red7 { color: #e74c3c; }
 
     .button-group {
@@ -59,10 +62,10 @@
       gap: 8px;
     }
     .stop-button, .start-button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
+      padding: 8px 16px;
       font-size: 16px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
     .stop-button {
@@ -75,8 +78,7 @@
       margin-top: 16px;
     }
     .message {
-      margin-top: 8px;
-      font-size: 14px;
+      height: 24px;
       font-weight: bold;
     }
     .great { color: red; }
@@ -88,27 +90,21 @@
   <div class="machine">
     <div class="reels-container">
       <div>
-        <div class="reel-window">
-          <div class="reel" id="reel1"></div>
-        </div>
+        <div class="reel-window"><div class="reel" id="reel1"></div></div>
         <div class="button-group">
           <button class="stop-button" onclick="stopReel(0)">STOP</button>
           <div class="message" id="msg1"></div>
         </div>
       </div>
       <div>
-        <div class="reel-window">
-          <div class="reel" id="reel2"></div>
-        </div>
+        <div class="reel-window"><div class="reel" id="reel2"></div></div>
         <div class="button-group">
           <button class="stop-button" onclick="stopReel(1)">STOP</button>
           <div class="message" id="msg2"></div>
         </div>
       </div>
       <div>
-        <div class="reel-window">
-          <div class="reel" id="reel3"></div>
-        </div>
+        <div class="reel-window"><div class="reel" id="reel3"></div></div>
         <div class="button-group">
           <button class="stop-button" onclick="stopReel(2)">STOP</button>
           <div class="message" id="msg3"></div>
@@ -119,39 +115,46 @@
   </div>
 
   <script>
-    const symbols = [["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "7"],
-                     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "BAR"],
-                     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "7"]];
-    const colors = ["blue7", "bar", "red7"];
+    const total = 21;
+    const symbols = [
+      Array(20).fill(""), ["7"]
+    ].flat();
+    const bars = [
+      Array(20).fill(""), ["BAR"]
+    ].flat();
+    const reds = [
+      Array(20).fill(""), ["7"]
+    ].flat();
+    const symbolData = [symbols, bars, reds];
+    const classes = ["blue7", "bar", "red7"];
     const reels = [];
     const intervals = [];
-    const targetIndex = 0; // 下段 = index 0 にする
-    const totalSymbols = 21;
-    const speed = 1000 / totalSymbols;
+    const speed = 1000 / total;
 
     function setup() {
       for (let i = 0; i < 3; i++) {
-        const reel = document.getElementById(`reel${i + 1}`);
+        const reel = document.getElementById("reel" + (i + 1));
         reel.innerHTML = "";
-        for (let j = 0; j < totalSymbols; j++) {
-          const div = document.createElement("div");
-          div.className = `symbol ${colors[i]}`;
-          div.textContent = symbols[i][j];
-          reel.appendChild(div);
-        }
-        reel.style.top = `-${targetIndex * 100}px`; // 初期位置は下段に
-        reels[i] = { el: reel, pos: targetIndex, running: false };
+        symbolData[i].forEach((s, idx) => {
+          const d = document.createElement("div");
+          d.className = `symbol ${classes[i]}`;
+          d.innerText = s;
+          reel.appendChild(d);
+        });
+        reels[i] = { el: reel, pos: total - 1, running: false };
+        reel.style.transform = `translateY(-${(total - 3) * 100}px)`;
       }
     }
 
     function startGame() {
       for (let i = 0; i < 3; i++) {
-        const reel = reels[i];
-        reel.running = true;
-        document.getElementById(`msg${i + 1}`).textContent = "";
+        reels[i].running = true;
+        document.getElementById("msg" + (i + 1)).textContent = "";
+        if (intervals[i]) clearInterval(intervals[i]);
         intervals[i] = setInterval(() => {
-          reel.pos = (reel.pos + 1) % totalSymbols;
-          reel.el.style.top = `-${reel.pos * 100}px`;
+          if (!reels[i].running) return;
+          reels[i].pos = (reels[i].pos + 1) % total;
+          reels[i].el.style.transform = `translateY(-${(reels[i].pos - 2 + total) % total * 100}px)`;
         }, speed);
       }
     }
@@ -161,22 +164,19 @@
       if (!reel.running) return;
       reel.running = false;
       clearInterval(intervals[index]);
-      const diff = (reel.pos - targetIndex + totalSymbols) % totalSymbols;
-      let message = "";
-      let cls = "";
+      const pos = (reel.pos + total) % total;
+      const diff = (pos - (total - 1) + total) % total;
+      const msg = document.getElementById("msg" + (index + 1));
       if (diff === 0) {
-        message = "great!";
-        cls = "great";
-      } else if (diff <= totalSymbols / 2) {
-        message = `${diff}コマ早い！`;
-        cls = "early";
+        msg.textContent = "great!";
+        msg.className = "message great";
+      } else if (diff <= total / 2) {
+        msg.textContent = `${diff}コマ早い！`;
+        msg.className = "message early";
       } else {
-        message = `${totalSymbols - diff}コマ遅い！`;
-        cls = "late";
+        msg.textContent = `${total - diff}コマ遅い！`;
+        msg.className = "message late";
       }
-      const msgEl = document.getElementById(`msg${index + 1}`);
-      msgEl.textContent = message;
-      msgEl.className = `message ${cls}`;
     }
 
     setup();
