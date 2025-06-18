@@ -1,64 +1,82 @@
 
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>スロット ビタ押し練習</title>
-<style>
+  <meta charset="UTF-8">
+  <title>スロットゲーム</title>
+  <style>
     body {
-      font-family: sans-serif;
-      background: #f7f7f7;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
+      font-family: sans-serif;
+    }
+    .machine {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    .machine {
+    .reels-container {
       display: flex;
-      margin-top: 30px;
+      gap: 16px;
     }
-    .reel {
+    .reel-window {
       width: 100px;
       height: 300px;
-      margin: 0 10px;
       overflow: hidden;
       border: 2px solid #333;
-      background: #fff;
+      border-radius: 8px;
       position: relative;
     }
-    .symbols {
+    .reel {
       position: absolute;
       width: 100%;
     }
     .symbol {
+      height: 100px;
       width: 100%;
-      height: 100px; font-size: 44px;
+      font-size: 48px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 36px;
-      font-weight: bold;
+      align-items: center;
     }
-    .blue { color: blue; }
-    .red { color: red; }
-    .black { color: black; }
-    .controls {
-      margin-top: 20px;
+    .blue7 { color: #3498db; }
+    .bar { color: black; }
+    .red7 { color: #e74c3c; }
+
+    .button-group {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
-    button {
-      margin: 0 5px;
-      padding: 10px 20px;
+    .stop-button, .start-button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
+      cursor: pointer;
+    }
+    .stop-button {
+      background: #e74c3c;
+      color: white;
+    }
+    .start-button {
+      background: #2ecc71;
+      color: white;
+      margin-top: 16px;
     }
     .message {
-      position: absolute;
-      top: 120px;
-      width: 100%;
-      text-align: center;
-      font-size: 18px;
+      margin-top: 8px;
+      font-size: 14px;
       font-weight: bold;
     }
     .great { color: red; }
@@ -67,83 +85,101 @@
   </style>
 </head>
 <body>
-<h1>スロット ビタ押し練習</h1>
-<div class="machine">
-<div class="reel">
-<div class="symbols" id="symbols0"></div>
-<div class="message" id="msg0"></div>
-</div>
-<div class="reel">
-<div class="symbols" id="symbols1"></div>
-<div class="message" id="msg1"></div>
-</div>
-<div class="reel">
-<div class="symbols" id="symbols2"></div>
-<div class="message" id="msg2"></div>
-</div>
-</div>
-<div class="controls">
-<button onclick="start()">スタート</button>
-<button onclick="stop(0)">STOP 1</button><button onclick="stop(1)">STOP 2</button><button onclick="stop(2)">STOP 3</button>
-</div>
-<script>
-    const reels = [[], [], []];
-    const symbols = ['','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
-    const targets = ['7', 'BAR', '7'];
-    const colors = ['blue', 'black', 'red'];
-    const positions = [0, 0, 0];
-    const intervals = [null, null, null];
+  <div class="machine">
+    <div class="reels-container">
+      <div>
+        <div class="reel-window">
+          <div class="reel" id="reel1"></div>
+        </div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(0)">STOP</button>
+          <div class="message" id="msg1"></div>
+        </div>
+      </div>
+      <div>
+        <div class="reel-window">
+          <div class="reel" id="reel2"></div>
+        </div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(1)">STOP</button>
+          <div class="message" id="msg2"></div>
+        </div>
+      </div>
+      <div>
+        <div class="reel-window">
+          <div class="reel" id="reel3"></div>
+        </div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(2)">STOP</button>
+          <div class="message" id="msg3"></div>
+        </div>
+      </div>
+    </div>
+    <button class="start-button" onclick="startGame()">START</button>
+  </div>
 
-    function buildReel(i) {
-      let reel = document.getElementById('symbols' + i);
-      reel.innerHTML = '';
-      for (let j = 0; j < 21; j++) {
-        const div = document.createElement('div');
-        div.className = 'symbol';
-        if (j === 10) {
-          div.textContent = targets[i];
-          div.classList.add(colors[i]);
-        } else {
-          div.textContent = '';
+  <script>
+    const symbols = [["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "7"],
+                     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "BAR"],
+                     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "7"]];
+    const colors = ["blue7", "bar", "red7"];
+    const reels = [];
+    const intervals = [];
+    const targetIndex = 20;
+    const totalSymbols = 21;
+    const speed = 1000 / totalSymbols;
+
+    function setup() {
+      for (let i = 0; i < 3; i++) {
+        const reel = document.getElementById(`reel${i + 1}`);
+        reel.innerHTML = "";
+        for (let j = 0; j < totalSymbols; j++) {
+          const div = document.createElement("div");
+          div.className = `symbol ${colors[i]}`;
+          div.textContent = symbols[i][j];
+          reel.appendChild(div);
         }
-        reel.appendChild(div);
+        reel.style.top = `-${(totalSymbols - 3 + 1) * 100}px`; // 初期位置（図柄を下段に）
+        reels[i] = { el: reel, pos: totalSymbols - 3 + 1, running: false };
       }
     }
 
-    function start() {
+    function startGame() {
       for (let i = 0; i < 3; i++) {
-        let reel = document.getElementById('symbols' + i);
-        positions[i] = 0;
+        const reel = reels[i];
+        reel.running = true;
+        document.getElementById(`msg${i + 1}`).textContent = "";
         intervals[i] = setInterval(() => {
-          positions[i] = (positions[i] + 1) % 21;
-          reel.style.top = (-positions[i] * 100) + 'px';
-        }, 47); // 21コマで1秒
-        document.getElementById('msg' + i).textContent = '';
+          reel.pos = (reel.pos + 1) % totalSymbols;
+          reel.el.style.top = `-${reel.pos * 100}px`;
+        }, speed);
       }
     }
 
-    function stop(i) {
-      clearInterval(intervals[i]);
-      let diff = (10 - positions[i] + 21) % 21;
-      let msg = document.getElementById('msg' + i);
+    function stopReel(index) {
+      const reel = reels[index];
+      if (!reel.running) return;
+      reel.running = false;
+      clearInterval(intervals[index]);
+      const diff = (targetIndex - reel.pos + totalSymbols) % totalSymbols;
+      let message = "";
+      let cls = "";
       if (diff === 0) {
-        msg.textContent = 'Great!';
-        msg.className = 'message great';
-      } else if (diff <= 10) {
-        msg.textContent = diff + 'コマ早い！';
-        msg.className = 'message early';
+        message = "great!";
+        cls = "great";
+      } else if (diff < totalSymbols / 2) {
+        message = `${diff}コマ早い！`;
+        cls = "early";
       } else {
-        msg.textContent = (21 - diff) + 'コマ遅い！';
-        msg.className = 'message late';
+        message = `${totalSymbols - diff}コマ遅い！`;
+        cls = "late";
       }
+      const msgEl = document.getElementById(`msg${index + 1}`);
+      msgEl.textContent = message;
+      msgEl.className = `message ${cls}`;
     }
 
-    window.onload = () => {
-      for (let i = 0; i < 3; i++) {
-        buildReel(i);
-        document.getElementById('symbols' + i).style.top = '-1000px'; // 初期状態：10番目を下段
-      }
-    };
+    setup();
   </script>
 </body>
 </html>
