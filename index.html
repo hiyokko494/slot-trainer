@@ -3,11 +3,11 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>スロットゲーム</title>
+  <title>スろットゲーム</title>
   <style>
     body {
       margin: 0;
-      background: #f4f4f4;
+      background: #f0f0f0;
       font-family: sans-serif;
       display: flex;
       justify-content: center;
@@ -15,45 +15,41 @@
       height: 100vh;
     }
     .machine {
-      background: white;
+      background: #fff;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       position: relative;
     }
     .reels-container {
       display: flex;
-      gap: 16px;
+      gap: 12px;
+      justify-content: center;
     }
     .reel-window {
       width: 100px;
-      height: 300px;
+      height: 300px; /* 3コマ分の高さに固定 */
       overflow: hidden;
       border: 2px solid #333;
-      position: relative;
-      border-radius: 8px;
       background: #fff;
+      position: relative;
     }
     .reel {
       position: absolute;
       width: 100%;
-      top: 0;
     }
     .symbol {
       height: 100px;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       font-size: 36px;
       font-weight: bold;
       width: 90%;
       margin: 0 auto;
     }
     .blue7 { color: #3498db; }
-    .bar { color: black; font-size: 28px; }
+    .bar { color: #000; font-size: 28px; }
     .red7 { color: #e74c3c; }
 
     .button-group {
@@ -61,7 +57,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .stop-button, .start-button {
       padding: 8px 16px;
@@ -70,15 +66,9 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .stop-button {
-      background: #e74c3c;
-      color: white;
-    }
-    .start-button {
-      background: #2ecc71;
-      color: white;
-      margin-top: 16px;
-    }
+    .stop-button { background: #e74c3c; color: white; }
+    .start-button { background: #2ecc71; color: white; margin-top: 20px; }
+
     .message {
       height: 24px;
       font-weight: bold;
@@ -93,11 +83,10 @@
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
       display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
     .congrats-text {
       font-size: 48px;
