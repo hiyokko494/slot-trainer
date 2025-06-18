@@ -6,7 +6,7 @@
   <title>スロットゲーム</title>
   <style>
     body {
-      background: #f9f9f9;
+      background: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -42,7 +42,7 @@
     .symbol {
       height: 100px;
       width: 100%;
-      font-size: 48px;
+      font-size: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -125,7 +125,7 @@
     const colors = ["blue7", "bar", "red7"];
     const reels = [];
     const intervals = [];
-    const targetIndex = 20;
+    const targetIndex = 0; // 下段 = index 0 にする
     const totalSymbols = 21;
     const speed = 1000 / totalSymbols;
 
@@ -139,8 +139,8 @@
           div.textContent = symbols[i][j];
           reel.appendChild(div);
         }
-        reel.style.top = `-${(totalSymbols - 3 + 1) * 100}px`; // 初期位置（図柄を下段に）
-        reels[i] = { el: reel, pos: totalSymbols - 3 + 1, running: false };
+        reel.style.top = `-${targetIndex * 100}px`; // 初期位置は下段に
+        reels[i] = { el: reel, pos: targetIndex, running: false };
       }
     }
 
@@ -161,13 +161,13 @@
       if (!reel.running) return;
       reel.running = false;
       clearInterval(intervals[index]);
-      const diff = (targetIndex - reel.pos + totalSymbols) % totalSymbols;
+      const diff = (reel.pos - targetIndex + totalSymbols) % totalSymbols;
       let message = "";
       let cls = "";
       if (diff === 0) {
         message = "great!";
         cls = "great";
-      } else if (diff < totalSymbols / 2) {
+      } else if (diff <= totalSymbols / 2) {
         message = `${diff}コマ早い！`;
         cls = "early";
       } else {
