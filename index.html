@@ -35,11 +35,12 @@
       border: 2px solid #333;
       position: relative;
       border-radius: 8px;
+      background: #fff;
     }
     .reel {
       position: absolute;
       width: 100%;
-      transition: transform 0.1s linear;
+      top: 0;
     }
     .symbol {
       height: 100px;
@@ -140,10 +141,11 @@
   <script>
     const total = 21;
     const visible = 3;
-    const symbols = [Array(20).fill(""), ["7"]].flat();
-    const bars = [Array(20).fill(""), ["BAR"]].flat();
-    const reds = [Array(20).fill(""), ["7"]].flat();
-    const symbolData = [symbols, bars, reds];
+    const symbolData = [
+      [...Array(20).fill(""), "7"],
+      [...Array(20).fill(""), "BAR"],
+      [...Array(20).fill(""), "7"]
+    ];
     const classes = ["blue7", "bar", "red7"];
     const reels = [];
     const intervals = [];
@@ -161,7 +163,7 @@
           reel.appendChild(d);
         });
         reels[i] = { el: reel, pos: 0, running: false };
-        reel.style.transform = `translateY(${(total - visible) * 100}px)`;
+        reel.style.top = `-${(total - visible) * 100}px`;
       }
     }
 
@@ -174,7 +176,7 @@
         intervals[i] = setInterval(() => {
           if (!reels[i].running) return;
           reels[i].pos = (reels[i].pos + 1) % total;
-          reels[i].el.style.transform = `translateY(${(reels[i].pos - (total - visible) + total) % total * 100}px)`;
+          reels[i].el.style.top = `-${((reels[i].pos - (total - visible) + total) % total) * 100}px`;
         }, speed);
       }
       document.getElementById("congrats").style.display = "none";
