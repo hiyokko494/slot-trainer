@@ -40,17 +40,26 @@
     .great { color: red; }
     .early { color: green; }
     .late { color: blue; }
+
+    .buttons {
+      clear: both;
+      margin-top: 120px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="reel-container"><div class="reel" id="reel1"></div><div class="result" id="result1"></div></div>
   <div class="reel-container"><div class="reel" id="reel2"></div><div class="result" id="result2"></div></div>
   <div class="reel-container"><div class="reel" id="reel3"></div><div class="result" id="result3"></div></div>
-  <br style="clear: both;" />
-  <button onclick="start()">START</button>
-  <button onclick="stop(0)">STOP1</button>
-  <button onclick="stop(1)">STOP2</button>
-  <button onclick="stop(2)">STOP3</button>
+
+  <div class="buttons">
+    <button onclick="stop(0)">STOP1</button>
+    <button onclick="stop(1)">STOP2</button>
+    <button onclick="stop(2)">STOP3</button>
+    <br><br>
+    <button onclick="start()">START</button>
+  </div>
 
   <script>
     const symbols = [["", "", "7"], ["", "", "BAR"], ["", "", "7"]];
@@ -58,7 +67,7 @@
     const results = [document.getElementById("result1"), document.getElementById("result2"), document.getElementById("result3")];
     const positions = [0, 0, 0];
     const intervalIds = [null, null, null];
-    const targetPosition = 2; // 下段に当たるインデックス
+    const targetPosition = 2; // 下段（3コマ目）
 
     function fillReel(reel, index) {
       reel.innerHTML = "";
@@ -81,9 +90,9 @@
         let pos = 0;
         intervalIds[i] = setInterval(() => {
           pos = (pos + 1) % 21;
-          reels[i].style.top = `${pos * 100}px`; // 正方向：上から下に進む
+          reels[i].style.top = `${pos * 100}px`;
           positions[i] = pos;
-        }, 1000 / 21); // 約1秒で1回転
+        }, 1000 / 21);
         results[i].textContent = "";
       }
     }
@@ -95,12 +104,12 @@
       if (diff === 0) {
         results[index].textContent = "great!";
         results[index].className = "result great";
-      } else if (diff < 11) {
-        results[index].textContent = `${diff}コマ早い！`;
-        results[index].className = "result early";
-      } else {
-        results[index].textContent = `${21 - diff}コマ遅い！`;
+      } else if (diff <= 10) {
+        results[index].textContent = `${diff}コマ遅い！`;
         results[index].className = "result late";
+      } else {
+        results[index].textContent = `${21 - diff}コマ早い！`;
+        results[index].className = "result early";
       }
     }
   </script>
