@@ -1,11 +1,10 @@
 
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<title>スロットゲーム</title>
-<style>
+  <meta charset="UTF-8" />
+  <title>スロットゲーム</title>
+  <style>
     body {
       margin: 0;
       background: #f0f0f0;
@@ -103,36 +102,37 @@
   </style>
 </head>
 <body>
-<div class="machine">
-<div class="congrats-overlay" id="congrats">
-<div class="congrats-text">CONGRATULATION!</div>
-</div>
-<div class="reels-container">
-<div>
-<div class="reel-window"><div class="reel" id="reel1"></div><div class="stopped-symbols" id="stopped-symbols1"><div class="stopped-symbol top symbol-blue7" id="stopped-top1">7</div><div class="stopped-symbol middle symbol-blue7" id="stopped-middle1">7</div><div class="stopped-symbol bottom symbol-blue7" id="stopped-bottom1">7</div></div></div>
-<div class="button-group">
-<button class="stop-button" onclick="stopReel(0)">STOP</button>
-<div class="message" id="msg1"></div>
-</div>
-</div>
-<div>
-<div class="reel-window"><div class="reel" id="reel2"></div><div class="stopped-symbols" id="stopped-symbols2"><div class="stopped-symbol top symbol-bar" id="stopped-top2">BAR</div><div class="stopped-symbol middle symbol-bar" id="stopped-middle2">BAR</div><div class="stopped-symbol bottom symbol-bar" id="stopped-bottom2">BAR</div></div></div>
-<div class="button-group">
-<button class="stop-button" onclick="stopReel(1)">STOP</button>
-<div class="message" id="msg2"></div>
-</div>
-</div>
-<div>
-<div class="reel-window"><div class="reel" id="reel3"></div><div class="stopped-symbols" id="stopped-symbols3"><div class="stopped-symbol top symbol-red7" id="stopped-top3">7</div><div class="stopped-symbol middle symbol-red7" id="stopped-middle3">7</div><div class="stopped-symbol bottom symbol-red7" id="stopped-bottom3">7</div></div></div>
-<div class="button-group">
-<button class="stop-button" onclick="stopReel(2)">STOP</button>
-<div class="message" id="msg3"></div>
-</div>
-</div>
-</div>
-<button class="start-button" onclick="startGame()">START</button>
-</div>
-<script>
+  <div class="machine">
+    <div class="congrats-overlay" id="congrats">
+      <div class="congrats-text">CONGRATULATION!</div>
+    </div>
+    <div class="reels-container">
+      <div>
+        <div class="reel-window"><div class="reel" id="reel1"></div></div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(0)">STOP</button>
+          <div class="message" id="msg1"></div>
+        </div>
+      </div>
+      <div>
+        <div class="reel-window"><div class="reel" id="reel2"></div></div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(1)">STOP</button>
+          <div class="message" id="msg2"></div>
+        </div>
+      </div>
+      <div>
+        <div class="reel-window"><div class="reel" id="reel3"></div></div>
+        <div class="button-group">
+          <button class="stop-button" onclick="stopReel(2)">STOP</button>
+          <div class="message" id="msg3"></div>
+        </div>
+      </div>
+    </div>
+    <button class="start-button" onclick="startGame()">START</button>
+  </div>
+
+  <script>
     const total = 21;
     const visible = 3;
     const symbolData = [
