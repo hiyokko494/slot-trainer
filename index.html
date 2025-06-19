@@ -111,6 +111,7 @@
     <div class="message" id="congrats">CONGRATULATION!</div>
   </div>
 
+  
   <script>
     const reels = [null, document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
     const feedbacks = [null, document.getElementById("feedback1"), document.getElementById("feedback2"), document.getElementById("feedback3")];
@@ -119,51 +120,72 @@
       2: '<div class="symbol bar">BAR</div>',
       3: '<div class="symbol red7">7</div>'
     };
-    let startTime = 0;
-    let stopTimes = {}, stopResults = {};
+    const totalFrames = 21;
+    const visibleFrames = 3;
+    const symbolHeight = 50;
+    const fullHeight = totalFrames * symbolHeight;
+
+    let spinning = [false, false, false];
+    let stopResults = {};
+    let intervalIds = [];
 
     function generateReels() {
       for (let i = 1; i <= 3; i++) {
         let html = "";
         for (let j = 0; j < 20; j++) html += '<div class="symbol">&nbsp;</div>';
         html += symbols[i];
+        for (let j = 0; j < 1; j++) html += '<div class="symbol">&nbsp;</div>';
         reels[i].innerHTML = html;
-        reels[i].style.animation = "none";
-        reels[i].style.top = "-1000px"; // show last (bottom) symbol
+        reels[i].style.top = `-${(totalFrames - visibleFrames) * symbolHeight}px`;
         feedbacks[i].textContent = "";
+        spinning[i] = false;
+        stopResults[i] = null;
       }
+      document.getElementById("congrats").style.display = "none";
     }
 
     function startReels() {
       generateReels();
-      stopTimes = {};
-      stopResults = {};
-      document.getElementById("congrats").style.display = "none";
-      startTime = Date.now();
       for (let i = 1; i <= 3; i++) {
-        reels[i].style.animation = "scrollDown 1s linear infinite";
+        let position = (totalFrames - visibleFrames) * symbolHeight;
+        spinning[i] = true;
+        intervalIds[i] = setInterval(() => {
+          position += 10;
+          if (position >= fullHeight) position = 0;
+          reels[i].style.top = `-${position}px`;
+        }, 30);
       }
     }
 
     function stopReel(index) {
-      if (stopTimes[index]) return;
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const pos = (elapsed % 1000) / 1000;
-      const segment = 1 / 21;
-      const offsetFromBottom = (pos + (3 * segment)) % 1; // adjust: bottom is 3rd visible symbol
-      const diff = offsetFromBottom % segment;
-      const offset = diff < segment/2 ? -diff : segment - diff;
-      const frames = Math.round(offset / segment);
-      const result = frames === 0 ? "great!" : `${Math.abs(frames)}コマ${offset < 0 ? "早い" : "遅い"}`;
+      if (!spinning[index]) return;
 
-      reels[index].style.animation = "none";
+      clearInterval(intervalIds[index]);
+      spinning[index] = false;
+
+      let currentTop = parseInt(reels[index].style.top);
+      let currentIndex = Math.round(currentTop / symbolHeight);
+      let targetIndex = totalFrames - 1; // 下段に図柄がくる位置
+      let diff = (currentIndex - targetIndex + totalFrames) % totalFrames;
+
+      let result = "";
+      if (diff === 0) {
+        result = "great!";
+        feedbacks[index].style.color = "red";
+      } else if (diff <= totalFrames / 2) {
+        result = `${diff}コマ早い！`;
+        feedbacks[index].style.color = "green";
+      } else {
+        result = `${totalFrames - diff}コマ遅い！`;
+        feedbacks[index].style.color = "blue";
+      }
+
+      reels[index].style.top = `-${targetIndex * symbolHeight}px`;
       feedbacks[index].textContent = result;
-      stopTimes[index] = elapsed;
       stopResults[index] = result;
 
-      if (Object.keys(stopResults).length === 3) {
-        if (Object.values(stopResults).every(v => v === "great!")) {
+      if (Object.values(spinning).every(v => v === false)) {
+        if (Object.values(stopResults).every(r => r === "great!")) {
           document.getElementById("congrats").style.display = "block";
         }
       }
@@ -171,5 +193,6 @@
 
     window.onload = generateReels;
   </script>
+
 </body>
 </html>
