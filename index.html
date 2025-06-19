@@ -188,13 +188,13 @@
     if (diff === 0) {
       message = 'great!';
       color = 'red';
-    } else if (diff < total / 2) {
+    } else if (diff <= total / 2) {
       message = `${diff}コマ早い！`;
       color = 'green';
     } else {
-      const late = total - diff;
-      message = `${late}コマ遅い！`;
+      message = `${total - diff}コマ遅い！`;
       color = 'blue';
+    }
     }
 
       const msg = document.getElementById("msg" + (index + 1));
