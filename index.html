@@ -43,10 +43,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
       font-weight: bold;
       width: 90%;
       margin: 0 auto;
+    }
+    .symbol.large {
+      font-size: 44px;
+    }
+    .symbol.bar {
+      font-size: 28px;
     }
     .blue7 { color: #3498db; }
     .bar { color: #000; font-size: 28px; }
@@ -147,7 +152,7 @@
         reel.innerHTML = "";
         symbolData[i].forEach((s) => {
           const d = document.createElement("div");
-          d.className = `symbol ${classes[i]}`;
+          d.className = `symbol ${classes[i]}${(classes[i].includes('7') ? ' large' : '')}`;
           d.innerText = s;
           reel.appendChild(d);
         });
@@ -178,7 +183,7 @@
       clearInterval(intervals[index]);
       const pos = (reel.pos + total) % total;
       const target = total - 1; // 下段に止めるべき位置
-      const diff = (target - pos + total) % total;
+      const diff = (pos - target + total) % total;
       const msg = document.getElementById("msg" + (index + 1));
       stopped[index] = true;
 
