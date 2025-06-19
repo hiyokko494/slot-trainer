@@ -183,7 +183,19 @@
       clearInterval(intervals[index]);
       const pos = (reel.pos + total) % total;
       const target = total - 1; // 下段に止めるべき位置
-      const diff = (pos - target + total) % total;
+      
+    let diff = (pos - target + total) % total;
+    if (diff === 0) {
+      message = 'great!';
+      color = 'red';
+    } else if (diff <= total / 2) {
+      message = `${diff}コマ早い！`;
+      color = 'green';
+    } else {
+      message = `${total - diff}コマ遅い！`;
+      color = 'blue';
+    }
+
       const msg = document.getElementById("msg" + (index + 1));
       stopped[index] = true;
 
