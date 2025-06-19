@@ -51,10 +51,10 @@
       font-size: 44px;
     }
     .symbol.bar {
-      font-size: 28px;
+      font-size: 36px;
     }
     .blue7 { color: #3498db; }
-    .bar { color: #000; font-size: 28px; }
+    .bar { color: #000; }
     .red7 { color: #e74c3c; }
 
     .button-group {
@@ -152,7 +152,7 @@
         reel.innerHTML = "";
         symbolData[i].forEach((s) => {
           const d = document.createElement("div");
-          d.className = `symbol ${classes[i]}${(classes[i].includes('7') ? ' large' : '')}`;
+          d.className = `symbol ${classes[i]}${s === 'BAR' ? ' bar' : ' large'}`;
           d.innerText = s;
           reel.appendChild(d);
         });
@@ -169,7 +169,7 @@
         if (intervals[i]) clearInterval(intervals[i]);
         intervals[i] = setInterval(() => {
           if (!reels[i].running) return;
-          reels[i].pos = (reels[i].pos - 1 + total) % total;
+          reels[i].pos = (reels[i].pos + 1) % total;
           reels[i].el.style.top = `-${(reels[i].pos) * 100}px`;
         }, speed);
       }
@@ -181,21 +181,10 @@
       if (!reel.running) return;
       reel.running = false;
       clearInterval(intervals[index]);
+
+      const target = total - 1; // 下段
       const pos = (reel.pos + total) % total;
-      const target = total - 1; // 下段に止めるべき位置
-      
-    let diff = (pos - target + total) % total;
-    if (diff === 0) {
-      message = 'great!';
-      color = 'red';
-    } else if (diff <= total / 2) {
-      message = `${diff}コマ早い！`;
-      color = 'green';
-    } else {
-      message = `${total - diff}コマ遅い！`;
-      color = 'blue';
-    }
-    }
+      let diff = (target - pos + total) % total;
 
       const msg = document.getElementById("msg" + (index + 1));
       stopped[index] = true;
@@ -204,14 +193,14 @@
         msg.textContent = "great!";
         msg.className = "message great";
       } else if (diff <= total / 2) {
-        msg.textContent = `${diff}コマ遅い！`;
-        msg.className = "message late";
-      } else {
-        msg.textContent = `${total - diff}コマ早い！`;
+        msg.textContent = `${diff}コマ早い！`;
         msg.className = "message early";
+      } else {
+        msg.textContent = `${total - diff}コマ遅い！`;
+        msg.className = "message late";
       }
 
-      if (stopped.every(s => s && document.querySelectorAll('.message.great').length === 3)) {
+      if (stopped.every(s => s) && document.querySelectorAll('.message.great').length === 3) {
         document.getElementById("congrats").style.display = "flex";
       }
     }
